@@ -5,8 +5,9 @@
   <title>Cadastro de Clientes</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    input, select, button { margin: 5px 0; display: block; width: 300px; }
-    #listBoxClientes { height: 100px; }
+    input, select, button { margin: 5px 0; display: block; width: 300px; padding: 6px; box-sizing: border-box; }
+    #listBoxClientes { height: 120px; }
+    button { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -22,29 +23,65 @@
   <input type="text" id="txtTelefone" placeholder="Telefone">
   <input type="email" id="txtEmail" placeholder="Email">
 
+  <button onclick="incluirCliente()">Incluir Cliente</button>
+  <button onclick="alterarCliente()">Alterar Cliente</button>
+
   <script>
-    // Simulação de banco de dados local
-    const clientes = [
+    const listBox = document.getElementById("listBoxClientes");
+
+    const clientesIniciais = [
       { id: 1, nome: "João Silva", endereco: "Rua A", telefone: "123456", email: "joao@gmail.com" },
       { id: 2, nome: "Maria Oliveira", endereco: "Rua B", telefone: "654321", email: "maria@gmail.com" }
     ];
 
-    // Salvar no localStorage
-    localStorage.setItem("clientes", JSON.stringify(clientes));
+    let listaClientes = JSON.parse(localStorage.getItem("clientes"));
+    if (!listaClientes) {
+      listaClientes = clientesIniciais;
+      salvarNoStorage();
+    }
 
-    // Preencher lista de clientes
-    const listBox = document.getElementById("listBoxClientes");
-    const listaClientes = JSON.parse(localStorage.getItem("clientes"));
-    listaClientes.forEach(cliente => {
-      const option = document.createElement("option");
-      option.value = cliente.id;
-      option.textContent = `${cliente.id} - ${cliente.nome}`;
-      listBox.appendChild(option);
-    });
+    function salvarNoStorage() {
+      localStorage.setItem("clientes", JSON.stringify(listaClientes));
+    }
 
-    // Buscar cliente e preencher formulário
+    function atualizarLista() {
+      listBox.innerHTML = "";
+      listaClientes.forEach(cliente => {
+        const option = document.createElement("option");
+        option.value = cliente.id;
+        option.textContent = `${cliente.id} - ${cliente.nome}`;
+        listBox.appendChild(option);
+      });
+    }
+
+    function limparCampos() {
+      document.getElementById("txtNome").value = "";
+      document.getElementById("txtEndereco").value = "";
+      document.getElementById("txtTelefone").value = "";
+      document.getElementById("txtEmail").value = "";
+    }
+
+    function obterDadosValidados() {
+      const nome = document.getElementById("txtNome").value.trim();
+      const endereco = document.getElementById("txtEndereco").value.trim();
+      const telefone = document.getElementById("txtTelefone").value.trim();
+      const email = document.getElementById("txtEmail").value.trim();
+
+      if (!nome || !endereco || !telefone || !email) {
+        alert("Por favor, preencha todos os campos antes de salvar.");
+        return null;
+      }
+
+      return { nome, endereco, telefone, email };
+    }
+
     function buscarCliente() {
       const selectedId = parseInt(listBox.value);
+      if (isNaN(selectedId)) {
+        alert("Selecione um cliente na lista primeiro.");
+        return;
+      }
+
       const cliente = listaClientes.find(c => c.id === selectedId);
       if (cliente) {
         document.getElementById("txtNome").value = cliente.nome;
@@ -53,6 +90,48 @@
         document.getElementById("txtEmail").value = cliente.email;
       }
     }
+
+    function incluirCliente() {
+      const dados = obterDadosValidados();
+      if (!dados) return;
+
+      const novoId = listaClientes.length > 0 
+        ? Math.max(...listaClientes.map(c => c.id)) + 1 
+        : 1;
+
+      const novoCliente = {
+        id: novoId,
+        ...dados
+      };
+
+      listaClientes.push(novoCliente);
+      salvarNoStorage();
+      atualizarLista();
+      limparCampos();
+      alert("Cliente incluído com sucesso!");
+    }
+
+    function alterarCliente() {
+      const selectedId = parseInt(listBox.value);
+      if (isNaN(selectedId)) {
+        alert("Selecione um cliente na lista para alterar.");
+        return;
+      }
+
+      const dados = obterDadosValidados();
+      if (!dados) return;
+
+      const index = listaClientes.findIndex(c => c.id === selectedId);
+      if (index !== -1) {
+        listaClientes[index] = { id: selectedId, ...dados };
+        salvarNoStorage();
+        atualizarLista();
+        listBox.value = selectedId;
+        alert("Cliente alterado com sucesso!");
+      }
+    }
+
+    atualizarLista();
   </script>
 </body>
 </html>

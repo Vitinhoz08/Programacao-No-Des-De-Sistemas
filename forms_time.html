@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Qual o seu Time do Coração?</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      margin: 20px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    select, button {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      padding: 2px 6px;
+      vertical-align: middle;
+    }
+    select {
+      width: 130px;
+    }
+    button {
+      padding: 2px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Qual o seu Time do Coração?</h1>
+
+  <form id="formTime" onsubmit="enviarFormulario(event)">
+    <select id="selectTime">
+      <option value="Botafogo">Botafogo</option>
+      <option value="Flamengo">Flamengo</option>
+      <option value="Fluminense">Fluminense</option>
+      <option value="Vasco da Gama">Vasco da Gama</option>
+    </select>
+
+    <button type="submit">Enviar</button>
+    <button type="button" onclick="cancelarFormulario()">Cancelar</button>
+  </form>
+
+  <script>
+    function enviarFormulario(event) {
+      event.preventDefault(); // Evita o recarregamento da página
+      const timeEscolhido = document.getElementById("selectTime").value;
+      alert("Seu time do coração é: " + timeEscolhido + "!");
+    }
+
+    function cancelarFormulario() {
+      const confirmar = confirm("Deseja realmente cancelar a seleção?");
+      if (confirmar) {
+        document.getElementById("selectTime").selectedIndex = 0; // Volta para Botafogo
+      }
+    }
+  </script>
+
+</body>
+</html>

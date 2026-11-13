@@ -1,58 +1,212 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Cadastro de Clientes</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, select, button { margin: 5px 0; display: block; width: 300px; }
-    #listBoxClientes { height: 100px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Clientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        h2, h3 {
+            font-family: Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Padronização de tamanhos idêntica ao layout do OneCompiler */
+        input, select, button {
+            margin: 5px 0;
+            display: block;
+            width: 300px;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+
+        #listBoxClientes {
+            height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 5px;
+            width: 300px;
+        }
+
+        .button-group button {
+            flex: 1;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <h2>Cadastro de Clientes</h2>
 
-  <label for="listBoxClientes">Clientes:</label>
-  <select id="listBoxClientes" size="5"></select>
-  <button onclick="buscarCliente()">Buscar Cliente</button>
+    <h2>Cadastro de Clientes</h2>
 
-  <h3>Dados do Cliente</h3>
-  <input type="text" id="txtNome" placeholder="Nome">
-  <input type="text" id="txtEndereco" placeholder="Endereço">
-  <input type="text" id="txtTelefone" placeholder="Telefone">
-  <input type="email" id="txtEmail" placeholder="Email">
+    <label for="listBoxClientes">Clientes:</label>
+    <select id="listBoxClientes" size="5" onchange="selecionarCliente()"></select>
 
-  <script>
-    // Simulação de banco de dados local
-    const clientes = [
-      { id: 1, nome: "João Silva", endereco: "Rua A", telefone: "123456", email: "joao@gmail.com" },
-      { id: 2, nome: "Maria Oliveira", endereco: "Rua B", telefone: "654321", email: "maria@gmail.com" }
-    ];
+    <div class="button-group">
+        <button type="button" onclick="buscarCliente()">Buscar Cliente</button>
+        <button type="button" onclick="limparFormulario()">Novo / Limpar</button>
+    </div>
 
-    // Salvar no localStorage
-    localStorage.setItem("clientes", JSON.stringify(clientes));
+    <h3>Dados do Cliente</h3>
+    <input type="hidden" id="txtId">
+    <input type="text" id="txtNome" placeholder="Nome">
+    <input type="text" id="txtEndereco" placeholder="Endereço">
+    <input type="text" id="txtTelefone" placeholder="Telefone">
+    <input type="email" id="txtEmail" placeholder="Email">
 
-    // Preencher lista de clientes
-    const listBox = document.getElementById("listBoxClientes");
-    const listaClientes = JSON.parse(localStorage.getItem("clientes"));
-    listaClientes.forEach(cliente => {
-      const option = document.createElement("option");
-      option.value = cliente.id;
-      option.textContent = `${cliente.id} - ${cliente.nome}`;
-      listBox.appendChild(option);
-    });
+    <div class="button-group">
+        <button type="button" onclick="incluirCliente()">Incluir Cliente</button>
+        <button type="button" onclick="alterarCliente()">Alterar Cliente</button>
+    </div>
 
-    // Buscar cliente e preencher formulário
-    function buscarCliente() {
-      const selectedId = parseInt(listBox.value);
-      const cliente = listaClientes.find(c => c.id === selectedId);
-      if (cliente) {
-        document.getElementById("txtNome").value = cliente.nome;
-        document.getElementById("txtEndereco").value = cliente.endereco;
-        document.getElementById("txtTelefone").value = cliente.telefone;
-        document.getElementById("txtEmail").value = cliente.email;
-      }
-    }
-  </script>
+    <script>
+        // Dados iniciais de demonstração (caso o localStorage esteja vazio)
+        const clientesIniciais = [
+            { id: 1, nome: "João Silva", endereco: "Rua A, 123", telefone: "11999998888", email: "joao@email.com" },
+            { id: 2, nome: "Maria Oliveira", endereco: "Av B, 456", telefone: "21988887777", email: "maria@email.com" }
+        ];
+
+        // Carrega os dados do localStorage ao iniciar
+        function obterClientes() {
+            const dados = localStorage.getItem("clientesDB");
+            if (!dados) {
+                localStorage.setItem("clientesDB", JSON.stringify(clientesIniciais));
+                return clientesIniciais;
+            }
+            return JSON.parse(dados);
+        }
+
+        // Salva a lista atualizada no localStorage
+        function salvarClientes(lista) {
+            localStorage.setItem("clientesDB", JSON.stringify(lista));
+            atualizarLista();
+        }
+
+        // Atualiza a caixa de seleção (<select>) no DOM
+        function atualizarLista() {
+            const select = document.getElementById("listBoxClientes");
+            select.innerHTML = "";
+            const clientes = obterClientes();
+
+            clientes.forEach(cliente => {
+                const option = document.createElement("option");
+                option.value = cliente.id;
+                option.textContent = `${cliente.id} - ${cliente.nome}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Valida se todos os campos estão preenchidos
+        function validarCampos(nome, endereco, telefone, email) {
+            if (!nome || !endereco || !telefone || !email) {
+                alert("Por favor, preencha todos os campos do formulário!");
+                return false;
+            }
+            return true;
+        }
+
+        // Adiciona um novo cliente com ID único baseado no timestamp
+        function incluirCliente() {
+            const nome = document.getElementById("txtNome").value.trim();
+            const endereco = document.getElementById("txtEndereco").value.trim();
+            const telefone = document.getElementById("txtTelefone").value.trim();
+            const email = document.getElementById("txtEmail").value.trim();
+
+            if (!validarCampos(nome, endereco, telefone, email)) return;
+
+            const clientes = obterClientes();
+            const novoCliente = {
+                id: Date.now(), // ID único gerado pelo timestamp atual
+                nome: nome,
+                endereco: endereco,
+                telefone: telefone,
+                email: email
+            };
+
+            clientes.push(novoCliente);
+            salvarClientes(clientes);
+            limparFormulario();
+            alert("Cliente incluído com sucesso!");
+        }
+
+        // Altera os dados do cliente que foi previamente selecionado
+        function alterarCliente() {
+            const id = document.getElementById("txtId").value;
+            
+            if (!id) {
+                alert("Selecione um cliente na lista antes de tentar alterar!");
+                return;
+            }
+
+            const nome = document.getElementById("txtNome").value.trim();
+            const endereco = document.getElementById("txtEndereco").value.trim();
+            const telefone = document.getElementById("txtTelefone").value.trim();
+            const email = document.getElementById("txtEmail").value.trim();
+
+            if (!validarCampos(nome, endereco, telefone, email)) return;
+
+            let clientes = obterClientes();
+            const index = clientes.findIndex(c => c.id == id);
+
+            if (index !== -1) {
+                clientes[index] = { id: Number(id), nome, endereco, telefone, email };
+                salvarClientes(clientes);
+                limparFormulario();
+                alert("Dados do cliente alterados com sucesso!");
+            }
+        }
+
+        // Preenche o formulário ao clicar no botão "Buscar Cliente" ou mudar a seleção
+        function buscarCliente() {
+            const select = document.getElementById("listBoxClientes");
+            const idSelecionado = select.value;
+
+            if (!idSelecionado) {
+                alert("Selecione um cliente na lista!");
+                return;
+            }
+
+            const clientes = obterClientes();
+            const cliente = clientes.find(c => c.id == idSelecionado);
+
+            if (cliente) {
+                document.getElementById("txtId").value = cliente.id;
+                document.getElementById("txtNome").value = cliente.nome;
+                document.getElementById("txtEndereco").value = cliente.endereco;
+                document.getElementById("txtTelefone").value = cliente.telefone;
+                document.getElementById("txtEmail").value = cliente.email;
+            }
+        }
+
+        // Função de atalho ao clicar diretamente em um item do <select>
+        function selecionarCliente() {
+            buscarCliente();
+        }
+
+        // Limpa os campos do formulário
+        function limparFormulario() {
+            document.getElementById("txtId").value = "";
+            document.getElementById("txtNome").value = "";
+            document.getElementById("txtEndereco").value = "";
+            document.getElementById("txtTelefone").value = "";
+            document.getElementById("txtEmail").value = "";
+            document.getElementById("listBoxClientes").selectedIndex = -1;
+        }
+
+        // Carrega a lista automaticamente ao abrir a página
+        window.onload = atualizarLista;
+    </script>
 </body>
 </html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Escolha o seu time do coração">
+    <title>Time do Coração | Sua paixão em campo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #071a35;
+            --blue: #0b63ce;
+            --cyan: #21d4fd;
+            --green: #14b866;
+            --white: #ffffff;
+            --ink: #132238;
+            --muted: #61708a;
+            --line: #e3eaf3;
+            --shadow: 0 24px 60px rgba(4, 25, 55, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 28px 18px;
+            color: var(--ink);
+            font-family: "Inter", Arial, sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(33, 212, 253, 0.22), transparent 28%),
+                radial-gradient(circle at 90% 85%, rgba(20, 184, 102, 0.20), transparent 30%),
+                var(--navy);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.09;
+            background-image: linear-gradient(135deg, transparent 25%, #fff 25%, #fff 26%, transparent 26%);
+            background-size: 42px 42px;
+            pointer-events: none;
+        }
+
+        .card {
+            width: min(100%, 560px);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 28px;
+            background: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            position: relative;
+            padding: 34px 36px 38px;
+            color: var(--white);
+            background: linear-gradient(135deg, #0b63ce 0%, #08327b 58%, #071a35 100%);
+            isolation: isolate;
+        }
+
+        .hero::after {
+            content: "⚽";
+            position: absolute;
+            right: 24px;
+            bottom: -20px;
+            z-index: -1;
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 132px;
+            line-height: 1;
+            transform: rotate(-14deg);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 14px;
+            color: #bceeff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 3px;
+            border-radius: 999px;
+            background: var(--cyan);
+        }
+
+        h1 {
+            max-width: 390px;
+            margin: 0;
+            font-family: "Barlow Condensed", Impact, sans-serif;
+            font-size: clamp(42px, 10vw, 64px);
+            font-weight: 800;
+            line-height: 0.92;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            max-width: 340px;
+            margin: 18px 0 0;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-area {
+            padding: 34px 36px 36px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .select-wrap {
+            position: relative;
+        }
+
+        .select-wrap::after {
+            content: "⌄";
+            position: absolute;
+            top: 50%;
+            right: 18px;
+            color: var(--blue);
+            font-size: 22px;
+            font-weight: 700;
+            pointer-events: none;
+            transform: translateY(-56%);
+        }
+
+        select {
+            width: 100%;
+            appearance: none;
+            padding: 16px 48px 16px 17px;
+            border: 2px solid var(--line);
+            border-radius: 13px;
+            outline: none;
+            color: var(--ink);
+            background: #f8fafd;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        select:hover {
+            background: #fff;
+            border-color: #b7c8df;
+        }
+
+        select:focus {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(11, 99, 206, 0.14);
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            min-height: 49px;
+            border: 0;
+            border-radius: 12px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            color: var(--white);
+            background: linear-gradient(135deg, #0878e8, #0750ad);
+            box-shadow: 0 9px 20px rgba(11, 99, 206, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 12px 24px rgba(11, 99, 206, 0.35);
+        }
+
+        .btn-secondary {
+            color: var(--muted);
+            border: 1px solid var(--line);
+            background: var(--white);
+        }
+
+        .btn-secondary:hover {
+            color: var(--ink);
+            border-color: #b7c8df;
+            background: #f7f9fc;
+        }
+
+        .feedback {
+            min-height: 22px;
+            margin: 19px 0 0;
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .footer-note {
+            margin: 25px 0 0;
+            color: #93a0b3;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .hero,
+            .form-area {
+                padding-right: 24px;
+                padding-left: 24px;
+            }
+
+            .hero {
+                padding-top: 28px;
+                padding-bottom: 32px;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <header class="hero">
+            <p class="eyebrow">Paixão que veste a camisa</p>
+            <h1>Qual é o seu time do coração?</h1>
+            <p>Escolha o clube que faz seu coração bater mais forte e mostre sua torcida.</p>
+        </header>
+
+        <section class="form-area">
+            <form id="meuFormulario">
+                <label for="time">Selecione o seu time</label>
+                <div class="select-wrap">
+                    <select id="time" name="time">
+                        <option value="Botafogo">Botafogo</option>
+                        <option value="Flamengo">Flamengo</option>
+                        <option value="Fluminense">Fluminense</option>
+                        <option value="Vasco da Gama">Vasco da Gama</option>
+                    </select>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-primary" type="submit">Confirmar escolha</button>
+                    <button class="btn-secondary" type="button" id="btnCancelar">Cancelar</button>
+                </div>
+
+                <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+            </form>
+            <p class="footer-note">Uma escolha. Uma camisa. Uma paixão.</p>
+        </section>
+    </main>
+
+    <script>
+        const formulario = document.getElementById("meuFormulario");
+        const campoTime = document.getElementById("time");
+        const feedback = document.getElementById("feedback");
+        const btnCancelar = document.getElementById("btnCancelar");
+
+        formulario.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+            feedback.textContent = `Você escolheu o ${campoTime.value}!`;
+        });
+
+        btnCancelar.addEventListener("click", function () {
+            formulario.reset();
+            feedback.textContent = "Escolha redefinida.";
+        });
+    </script>
+</body>
+</html>
